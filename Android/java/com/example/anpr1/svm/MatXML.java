@@ -186,10 +186,6 @@ public class MatXML {
                     String valores[]=dataStr.split("\\s+");
                     int indice=1;
                     float valor;
-                    Log.e(TAG, "Tengo que procesar: " + valores.length);
-                    //Log.e(TAG, "Valores[0]: " + Float.parseFloat(valores[0]));
-                    //Log.e(TAG, "Valores[1]: " + Float.parseFloat(valores[1]));
-                    //Log.e(TAG, "Valores[154950]: " + Float.parseFloat(valores[154950]));
                     for( int r=0 ; r<rows ; r++ ) {
                         for (int c = 0; c < cols; c++) {
                             valor=Float.parseFloat(valores[indice]);

@@ -92,16 +92,6 @@ public class TessAsyncEngine extends AsyncTask<Object, Void, String> {
         if(s == null || bmp == null || context == null)
             return;
 
-        //Mostramos el resultado en un fragmentDialog personalizado => no implementado aquí
-        /*ImageDialog.New()
-                .addBitmap(bmp)
-                .addTitle(s)
-                .show(context.getFragmentManager(), TAG);*/
-
-        //mostramos el resultado con un toast
-        //Toast.makeText(context, "Texto reconocido: " + s, Toast.LENGTH_SHORT).show();
-        //Log.d(TAG, "Texto reconocido: " +s);
-
         //devolvemos el texto
         mCallback.onTaskComplete(s);
 

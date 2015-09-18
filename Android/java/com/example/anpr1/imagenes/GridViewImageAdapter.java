@@ -66,10 +66,7 @@ public class GridViewImageAdapter extends BaseAdapter {
         }
 
         // Escalamos la imagen de acuerdo al tamaño de la pantalla
-        //Bitmap image = decodeFile(filePaths.get(position), imageWidth,
-        //        imageWidth);
-
-        Bitmap image = getBitmapFromAssets(filePaths.get(position), imageWidth,
+         Bitmap image = getBitmapFromAssets(filePaths.get(position), imageWidth,
                 imageWidth);
 
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -94,17 +91,6 @@ public class GridViewImageAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View v) {
-            // on selecting grid view image
-            // launch full screen activity
-
-            /*Intent i = new Intent(actividad, FullScreenViewActivity.class);
-            i.putExtra("position", posicion);
-            actividad.startActivity(i);*/
-
-            //En este punto debemos devolver la ruta de la imagen o la imagen misma
-            //Toast.makeText(actividad.getApplicationContext(), "La imagen seleccionada es: " + filePaths.get(posicion), Toast.LENGTH_LONG).show();
-
-
             //devolvemos el valor y cerramos la actividad
             Intent intent=actividad.getIntent();
             intent.putExtra("resultado", filePaths.get(posicion));

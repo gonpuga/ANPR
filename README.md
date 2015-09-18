@@ -14,8 +14,7 @@ Sistema de reconocimiento de matrículas de tráfico para Android, basado en Ope
 
 #### Building
 
-Proyecto configurado para trabajar con Android SDK Tools r22.3+ y Android NDK 
-r10d+. 
+Proyecto configurado para trabajar con Android SDK Tools r22.3+ 
 
 Para generar la librería tess-two code, debe ejecutar la siguientes secuencia de comandos:
 

@@ -83,7 +83,7 @@ public class Procesador implements TaskCompleted {
         Utils.bitmapToMat(trainingDataBitmap, trainingData);
         //AQUI LA MATRIZ ES DE TIPO CvType.CV_8UC4 => PASAR A BGR CV_8UC1)
         Imgproc.cvtColor(trainingData,trainingData,Imgproc.COLOR_BGRA2GRAY);
-        //lo intento pasar a CV_32F
+        //La pasamos ahora a CV_32F
         trainingData.convertTo(trainingData, CvType.CV_32F);
 
         //definimos los parámetros de reconocedor
@@ -100,186 +100,10 @@ public class Procesador implements TaskCompleted {
         params.set_term_crit(termCriteria);
 
         //declaramos el reconocodecor de acuerdo a los parámetros anteriores
-        //quizá todo esto se haga en sólo el reconocedor => probar
         reconocedor=new CvSVM();
         reconocedor.train(trainingData, classes, new Mat(), new Mat(), params);
         Log.d(TAG, "Reconocedor entrenado con éxito!!!");
     }
-
-    //procesador con tesseract
-    /*
-    public Mat procesa(Mat entrada) {
-        //copia temporal
-        Mat salida = entrada.clone();
-        //Obtenemos las áreas de imagen candidatos a matrícula
-        List<Rect> candidatos=getCandidatosMatricula(entrada.clone());
-        if(candidatos.size()==0)
-            resultado="Procesando...";//rectificacion
-        //es posible que tengamos varios candidatos en cada imagen
-        //debemos discriminarlos => segmentacion interior
-        List<Rect>candidatosReales=new ArrayList<Rect>();
-        List<String>salidaReconocida=new ArrayList<String>();
-        //reconocemos
-        for(Rect candidato:candidatos)
-        {
-            Mat procesar=new Mat();
-            procesar = entrada.submat(candidato);
-            List<Rect> digitos=new ArrayList<Rect>();
-            digitos=segmentacionInterior(procesar);
-            //Log.d(TAG, "Candidatos dígito: " + digitos.size());
-            salida = dibujarResultado(entrada, candidato, resultado);
-            if(digitos.size()>=4 && digitos.size()<10) {
-                //dígito por dígito => tesseract
-                /*for(Rect digito:digitos)
-                {
-                    Mat zona=procesar.submat(digito);
-                    Bitmap resultBitmap = Bitmap.createBitmap(zona.cols(), zona.rows(), Bitmap.Config.ARGB_8888);
-                    Utils.matToBitmap(zona, resultBitmap);
-                    String matricula=ocr.detectText(resultBitmap);
-                    if(matricula.length()==1)
-                        resultado+=matricula;
-                    Log.d(TAG, "Caracter reconocido: " + matricula);
-                }*/
-
-                /*
-                //a esto le pasamos el tesseract => matricula completa => asyntask
-
-                //el ocr funciona a color =>!!!!!!!!!!!!!!!!!!!!!!!
-                //conversión a bitmap => el bitmap es a color y la salida en byn (según arriba)
-                //Esto en realidad se hará sobre la submatriz una vez reconocida la matrícula!!!!!!!!!!!!!!!!!!!!!
-                Bitmap resultBitmap = Bitmap.createBitmap(procesar.cols(), procesar.rows(), Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(procesar, resultBitmap);
-                //lo cancelamos de momento
-                if (ocr == null || ocr.getStatus().equals(AsyncTask.Status.FINISHED))
-                    ocr = new TessAsyncEngine(this);//nos encargamos de recibir los datos
-
-                    //sólo ejecutamos una vez (está pendiente de resultado)
-                else if (ocr.getStatus().equals(AsyncTask.Status.PENDING))
-                    ocr.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, padre, resultBitmap);
-                else
-                    Log.d(TAG, "Debo esperar a que acabe otro reconocedor");*//*
-            }
-        }
-        //Dependiendo de los candidatos mostramos el resultado
-        /*if(candidatosReales.size()==1)
-        {
-            Rect zona=candidatosReales.get(0);
-            salida=dibujarResultado(entrada, zona, resultado);
-        }
-        else {
-            if(candidatosReales.size()>1)//demasiados candidatos
-                dibujarCandidatos(salida, candidatosReales);
-            else
-            {
-                //no se ha reconocido nada => mostramos al menos el área analizada
-                dibujarCandidatos(salida, candidatos);
-            }
-        }*/
-
-/*
-        return salida;
-
-
-        /*
-        //obtenemos los candidatos a matricula => de este modo podemos probar distintos algoritmos
-        //cambiando esta función (15/07/2015)
-        List<Rect> candidatos = getCandidatosMatricula(entrada);
-        //los discriminamos
-        List<Rect> candidatosSegmentados = discriminarCandidatos(entrada, candidatos);
-
-        //pruebas de segmentación de la matrícula
-        /*if(candidatosSegmentados.size()==1){
-            Mat procesar = entrada.submat(candidatosSegmentados.get(0));
-            //salida=candidatosDigitos(procesar.clone());
-            salida=segmentarInteriorDisco(entrada, candidatosSegmentados.get(0));
-        }*/
-        /*
-        //sólo actuamos ante un candidato
-        if (candidatosSegmentados.size() == 1) {
-            Log.d(TAG, "OCR a la imagen");
-            Mat procesar = entrada.submat(candidatosSegmentados.get(0));
-            //salida=procesar.clone();//Con esto se muestra sólo la matrícula
-            List<Rect> digitos=getCandidatosDigitos(procesar.clone());
-            //reconocemos
-            StringBuilder resultado=new StringBuilder();
-            for(Rect digito:digitos)
-            {
-                Mat candidato=procesar.submat(digito);
-                //la convertimos a escala de grises
-                Imgproc.cvtColor(candidato,candidato,Imgproc.COLOR_BGRA2GRAY);
-                //lo reconocemos
-                resultado.append(leerImagen(candidato));
-            }
-            //ya podemos dibujar el resultado (x lo que sea se reconoce al revés)
-            String matriculaReconocida=resultado.reverse().toString();
-            //aquí habría que analizarla y rotarla o no de acuerdo al resultado
-            //al igual que eliminar caracteres o indicar de algún modo que no está reconocida
-            Log.d(TAG, "Matricula reconocida: " + matriculaReconocida);
-            Rect zona=candidatosSegmentados.get(0);
-            salida=dibujarResultado(entrada, zona, matriculaReconocida);
-
-            //mejoramos la matricula => no funciona
-            //procesar=prepararMatricula(procesar.clone());
-            //salida=candidatosDigitos(procesar.clone());//=>dibuja la mat con los candidatos
-            //modo 2 => muestra todo el dibujo
-            //salida=segmentarInteriorMatricula(entrada, candidatosSegmentados.get(0));
-            //modo 3 => muestra sólo la matrícula
-            //salida=segmentarInteriorMatricula(procesar);
-
-            /*
-            //en nuestro caso mostramos el candidato y el posible resultado
-            salida = dibujarResultado(entrada, candidatosSegmentados.get(0), resultado);
-            //el ocr funciona a color =>!!!!!!!!!!!!!!!!!!!!!!!
-            //conversión a bitmap => el bitmap es a color y la salida en byn (según arriba)
-            //Esto en realidad se hará sobre la submatriz una vez reconocida la matrícula!!!!!!!!!!!!!!!!!!!!!
-            Bitmap resultBitmap = Bitmap.createBitmap(procesar.cols(), procesar.rows(), Bitmap.Config.ARGB_8888);
-            Utils.matToBitmap(procesar, resultBitmap);
-
-            //probamos a hacerlo de modo individual
-            //Debemos tener en ejecución un único reconocedor cada vez
-            //Entonces, si no existe o el anterior ya ha terminado => crear una nuevo
-
-            //lo cancelamos de momento
-            if (ocr == null || ocr.getStatus().equals(AsyncTask.Status.FINISHED))
-                ocr = new TessAsyncEngine(this);//nos encargamos de recibir los datos
-
-            //sólo ejecutamos una vez (está pendiente de resultado)
-            else if (ocr.getStatus().equals(AsyncTask.Status.PENDING))
-                ocr.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, padre, resultBitmap);
-            else
-                Log.d(TAG, "Debo esperar a que acabe otro reconocedor");
-
-
-            //no asyntask
-            /*TessEngine ocr=TessEngine.Generate(padre);
-            Rect zona=candidatosSegmentados.get(0);
-            Mat procesar=entrada.submat(zona);
-            //salida=procesar.clone();
-            //el ocr trabaja a color
-            Bitmap resultBitmap = Bitmap.createBitmap(procesar.cols(), procesar.rows(), Bitmap.Config.ARGB_8888);
-            Utils.matToBitmap(procesar, resultBitmap);
-            //analizamos el texto
-            String matricula=ocr.detectText(resultBitmap);
-            if(matricula.length()!=0)
-                salida=dibujarResultado(entrada,zona,matricula);//reconocido
-            else
-                salida=dibujarResultado(entrada,zona,"???");*/
-        /*} else {
-            Log.d(TAG, "Demasiados candidatos en la imagen");
-            //los dibujamos a título informativo (verde)
-            dibujarCandidatos(salida, candidatos);
-        }
-
-
-        candidatos.clear();
-        candidatosSegmentados.clear();
-
-        return salida;*/
-
-
-        //modo nuevo
-
-   // }
 
     //procesasador con svm
     public Mat procesarSVM(Mat entrada) {
@@ -298,10 +122,10 @@ public class Procesador implements TaskCompleted {
             procesar = entrada.submat(candidato);
             List<Rect> digitos=new ArrayList<Rect>();
             digitos=segmentacionInterior(procesar);
-            //ordenamos los rectángulos de acuerdo a su coordenada x => 29/07/2015
+            //ordenamos los rectángulos de acuerdo a su coordenada x 
             //de este modo nos aseguramos el orden correcto en el reconocimiento
             Collections.sort(digitos, new OrdenarRectangulos());
-            //Log.d(TAG, "Candidatos dígito: " + digitos.size());
+          
             if(digitos.size()>=4 && digitos.size()<10) {
                 //le pasamos el ocr
                 StringBuilder resultado=new StringBuilder();
@@ -313,20 +137,17 @@ public class Procesador implements TaskCompleted {
                     //lo reconocemos
                     resultado.append(leerImagen(zona));
                 }
-                //ya podemos dibujar el resultado (x lo que sea se reconoce al revés)
+                //ya podemos dibujar el resultado
                 String matriculaReconocida=resultado.toString();
-                //la debemos procesar (quitamos el caracter de no reconocido por espacio
+                //la debemos procesar (quitamos el caracter de no reconocido por espacio)
                 matriculaReconocida=matriculaReconocida.replace((char)0,' ');
                 //ahora le quitamos los espacios
                 matriculaReconocida=matriculaReconocida.replaceAll("\\s+","");
-                //vemos si es europea
-                //corregirMatricula(matriculaReconocida);
                 //a partir de 3 caracteres reconocidos suponemos que es una matrícula
                 if(matriculaReconocida.length()>3) {
                     candidatosReales.add(candidato);
                     salidaReconocida.add(matriculaReconocida);
                 }
-                //Log.d(TAG, "Matricula reconocida: " + matriculaReconocida);
             }
         }
         //Dependiendo de los candidatos mostramos el resultado
@@ -367,7 +188,7 @@ public class Procesador implements TaskCompleted {
             procesar = entrada.submat(candidato);
             List<Rect> digitos=new ArrayList<Rect>();
             digitos=segmentacionInterior(procesar);
-            //Log.d(TAG, "Candidatos dígito: " + digitos.size());
+
             if(digitos.size()>=4 && digitos.size()<10) {
                 candidatosReales.add(candidato);
             }
@@ -377,16 +198,13 @@ public class Procesador implements TaskCompleted {
         if (candidatosReales.size() == 1) {
             Log.d(TAG, "OCR a la imagen");
             Mat procesar = entrada.submat(candidatosReales.get(0));
-            //salida=procesar.clone();//Con esto se muestra sólo la matrícula
             //en nuestro caso mostramos el candidato y el posible resultado
             salida = dibujarResultado(entrada, candidatosReales.get(0), resultado);
             //el ocr funciona a color =>!!!!!!!!!!!!!!!!!!!!!!!
-            //conversión a bitmap => el bitmap es a color y la salida en byn (según arriba)
-            //Esto en realidad se hará sobre la submatriz una vez reconocida la matrícula!!!!!!!!!!!!!!!!!!!!!
+            //conversión a bitmap => el bitmap es a color y la salida en byn 
             Bitmap resultBitmap = Bitmap.createBitmap(procesar.cols(), procesar.rows(), Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(procesar, resultBitmap);
 
-            //probamos a hacerlo de modo individual
             //Debemos tener en ejecución un único reconocedor cada vez
             //Entonces, si no existe o el anterior ya ha terminado => crear una nuevo
 
@@ -394,7 +212,7 @@ public class Procesador implements TaskCompleted {
             if (ocr == null || ocr.getStatus().equals(AsyncTask.Status.FINISHED))
                 ocr = new TessAsyncEngine(this);//nos encargamos de recibir los datos
 
-                //sólo ejecutamos una vez (está pendiente de resultado)
+            //sólo ejecutamos una vez (está pendiente de resultado)
             else if (ocr.getStatus().equals(AsyncTask.Status.PENDING))
                 ocr.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, padre, resultBitmap);
             else
@@ -451,16 +269,10 @@ public class Procesador implements TaskCompleted {
             Mat procesar=entrada.submat(digito);
             //aplicamos el ocr
             TessEngine ocr=TessEngine.Generate(padre);
-            //salida=procesar.clone();
             //el ocr trabaja a color
             Bitmap resultBitmap = Bitmap.createBitmap(procesar.cols(), procesar.rows(), Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(procesar, resultBitmap);
             //analizamos el texto
-            /*String matricula=ocr.detectText(resultBitmap);
-            if(matricula.length()!=0)
-                Log.d(TAG, "Caracter reconocido: " + matricula);
-            else
-                Log.d(TAG, "Caracter no reconocido");*/
             resultado.append(ocr.detectText(resultBitmap));
         }
         Log.d(TAG, "Matricula reconocido: " + resultado);
@@ -620,7 +432,7 @@ public class Procesador implements TaskCompleted {
 
     /**
      * Comprueba si el el área a analizar (RotatedRect) tiene un angulo determinado.
-     * Se realiza una conversión de ángulos a un modo más entendible (humanos)
+     * Se realiza una conversión de ángulos a un modo más entendible
      * La matrícula estará en horizontal con un margen de 15º
      * @param rect Zona a analizar
      * @return true si cumple el requisito de ángulo y false en caso contrario
@@ -647,10 +459,6 @@ public class Procesador implements TaskCompleted {
             return true;
     }
 
-    //buscamos candidatos de matrícula => segment
-    //Como la matrícula puede estar torcida => rotated rect
-    //mirar ejemplo en : http://study.marearts.com/2013/08/opencv-rotatedrect-draw-example-source.html
-    //FUNCIONA DE PUTA MADRE
 
     /**
      * Devuelve RotateRect con zonas que cumplen con el aspecto de matrícula
@@ -745,7 +553,6 @@ public class Procesador implements TaskCompleted {
                 Imgproc.CHAIN_APPROX_NONE);
 
         //debemos recorrer => nos quedamos sólo con lo que nos interesa
-        //List<MatOfPoint> contornosOK = new ArrayList<MatOfPoint>();
         for(MatOfPoint contorno:contours)
         {
             //Convert contours(i) from MatOfPoint to MatOfPoint2f
@@ -754,7 +561,6 @@ public class Procesador implements TaskCompleted {
             //corregimos por ambos lados
             if(verifySize(rect) && verifyAngle(rect)) {
                 candidatos.add(Imgproc.boundingRect(contorno));//tambien es válido rect.boundingRect()
-                //contornosOK.add(contorno);//para dibujo posterior =>quitar si no lo usamos
             }
         }
 
@@ -813,22 +619,7 @@ public class Procesador implements TaskCompleted {
         return digitos;
     }
 
-    private String corregirMatricula(String matricula)
-    {
-        //nos quedamos los 3 últimos caracteres
-        String fin =matricula.substring(matricula.length()-3, matricula.length());
-        //vemos que todos sean letras borrando todo lo que no sean dígitos
-        fin = fin.replaceAll("\\D+","");
-        if(fin.length()==0)
-        {
-            //estamos ante una matrícula europea
-
-        }
-
-        return matricula;
-
-    }
-
+    
 
     /**
      * Clase para la ordenación de los Rect

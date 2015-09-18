@@ -58,12 +58,12 @@ public class TessEngine {
         //usamos los dos algoritmos disponibles y los combina
         tessBaseAPI.setPageSegMode(TessBaseAPI.OEM_TESSERACT_CUBE_COMBINED);
         //mejoras segun la red => 17/05/2015
-        tessBaseAPI.setPageSegMode(TessBaseAPI.PageSegMode.PSM_AUTO_OSD);//???
+        tessBaseAPI.setPageSegMode(TessBaseAPI.PageSegMode.PSM_AUTO_OSD);//
         tessBaseAPI.setPageSegMode(TessBaseAPI.PageSegMode.PSM_SINGLE_LINE);//detección de línea => lo mejora algo
 
         Log.d(TAG, "Fin de la configuración de TessEngine");
         Log.d(TAG, "Analizando el bitmap");
-        //supuestamente convirtiendo a escala de grises da mejores resultados => 17/07/2015
+        //En principio convirtiendo a escala de grises da mejores resultados => 17/07/2015
         tessBaseAPI.setImage(toGrayscale(bitmap));
         String inspection = tessBaseAPI.getUTF8Text();
         Log.d(TAG, "Resultado: " + inspection);
@@ -92,7 +92,7 @@ public class TessEngine {
         return bmpGrayscale;
     }
 
-    //esto supuestamente es un algoritmo de treshold muy lento
+    //esto es un algoritmo de treshold muy lento
     public static Bitmap createBlackAndWhite(Bitmap src) {
         int width = src.getWidth();
         int height = src.getHeight();

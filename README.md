@@ -9,8 +9,8 @@ Sistema de reconocimiento de matrículas de tráfico para Android, basado en Ope
 * Un fichero de entrenamiento [trained data file][tessdata] para español. Se recomienda v.3.0.1. Estos ficheros se deben extraer en un subditectorio denominado `tessdata`.
 
 ####Dependencias
-http://opencv.org/
-https://github.com/rmtheis/tess-two
+* http://opencv.org/
+* https://github.com/rmtheis/tess-two
 
 ## Building
 
@@ -26,7 +26,7 @@ Para generar la librería tess-two code, debe ejecutar la siguientes secuencia d
     android update project --path .
     ant release
 
-## License
+## Licencia
 
     Copyright 2014 Gonzalo Puga Sabio
 

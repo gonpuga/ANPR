@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <!--
-    <item
-        android:id="@+id/cambiarCamara"
-        android:icon="@android:drawable/ic_menu_camera"
-        android:title="Cambiar cámara"/>
-        -->
-
     <item
         android:id="@+id/cambiarResolucion"
         android:icon="@android:drawable/ic_menu_view"
@@ -52,14 +45,6 @@
             <item
                 android:id="@+id/entrada_tesseract"
                 android:title="Tesseract"/>
-            <!--
-            <item
-                android:id="@+id/entrada_tesseract_segmentado"
-                android:title="Tesseract segmentado"/>
-            <item
-                android:id="@+id/entrada_combinados"
-                android:title="SVM + Tesseract"/>
-                -->
         </menu>
     </item>
 

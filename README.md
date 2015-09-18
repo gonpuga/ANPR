@@ -12,7 +12,7 @@ Sistema de reconocimiento de matrículas de tráfico para Android, basado en Ope
 * http://opencv.org/
 * https://github.com/rmtheis/tess-two
 
-#### Building
+#### Configuración
 
 Proyecto configurado para trabajar con Android SDK Tools r22.3+ 
 

@@ -245,14 +245,10 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
             case 1://tesseract sin segmentar
                 salida=procesador.procesarTesseract(entrada);
                 break;
-            case 2://tesseract segmentado
-                salida=procesador.procesarSVM(entrada);
-                break;
-            default://combinados
+            default://svm
                 salida=procesador.procesarSVM(entrada);
                 break;
         }
-        //Mat salida = procesador.procesa(entrada);
 
 
         //si nos piden guardar la imagen resultante lo hacemos
@@ -278,7 +274,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
 
     /**
      * Algunos dispositivos pueden no tener tecla para mostrar el menú.
-     * Lo arreglamos con est.
+     * Lo arreglamos con esto.
      *
      * @param event
      * @return
@@ -299,14 +295,6 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            /*case R.id.cambiarCamara:
-                //cambiamos entre la cámara frontal y la trasera
-                indiceCamara++;
-                if (indiceCamara == Camera.getNumberOfCameras()) {
-                    indiceCamara = 0;
-                }
-                recreate();// requiere un ApiMin=11
-                break;*/
             case R.id.resolucion_800x600:
                 cam_anchura = 800;
                 cam_altura = 600;
@@ -353,16 +341,6 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
             case R.id.entrada_tesseract:
                 algoritmo=1;
                 break;
-            /*case R.id.entrada_tesseract_segmentado:
-                algoritmo=2;
-                break;
-            case R.id.entrada_combinados:
-                algoritmo=3;
-                break;
-            /*case R.id.preferencias:
-                Intent i = new Intent(this, Preferencias.class);
-                startActivity(i);
-                break;*/
         }
         String msg = "W=" + Integer.toString(cam_anchura) + " H= "
                 + Integer.toString(cam_altura) + " Cam= "

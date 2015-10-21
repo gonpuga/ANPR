@@ -27,7 +27,7 @@ Para generar la librería tess-two code, debe ejecutar la siguientes secuencia d
 
 ## Licencia
 
-    Copyright 2014 Gonzalo Puga Sabio
+    Copyright 2015 Gonzalo Puga Sabio
 
     Licensed under the Academic Free License version 3.0
 
